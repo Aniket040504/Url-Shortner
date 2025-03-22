@@ -14,6 +14,20 @@ async function handlegenerateshortURL(req, res) {
 
     return res.json({ id: shortID });
 }
+async function handlegetshortUrl(req,res){
+    const shortId = req.params.shortid;
+
+    const entry = await URL.findOneAndUpdate(
+        { shortId },
+        { $push: { visitHistory: { timestamp: Date.now() } } },
+        { new: true }
+    );
+
+    if (!entry) {
+        return res.status(404).json({ error: "Short URL not found" });
+    }
+    return res.redirect(`https://${entry.redirectURL}`);
+};
 
 async function handlegetAnalytics(req,res){
     const shortId=req.params.shortid;
@@ -28,4 +42,5 @@ async function handlegetAnalytics(req,res){
 module.exports = {
     handlegenerateshortURL,
     handlegetAnalytics,
+    handlegetshortUrl,
 };

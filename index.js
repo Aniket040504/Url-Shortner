@@ -12,22 +12,9 @@ connectMongo("mongodb://127.0.0.1:27017/shorturl")
 
 app.use(express.json());
 
-app.get("/:shortid", async (req, res) => {
-    const shortId = req.params.shortid;
+app.use("/", urlRoute);
 
-    const entry = await URL.findOneAndUpdate(
-        { shortId },
-        { $push: { visitHistory: { timestamp: Date.now() } } },
-        { new: true }
-    );
-
-    if (!entry) {
-        return res.status(404).json({ error: "Short URL not found" });
-    }
-    return res.redirect(`https://${entry.redirectURL}`);
-});
-
-app.use('/url', urlRoute);
+app.use('/url', urlRoute); // create shorturl
 
 
 app.listen(PORT, () => console.log(`Running on ${PORT}`));
