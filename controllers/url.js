@@ -11,8 +11,9 @@ async function handlegenerateshortURL(req, res) {
         redirectURL: body.url,
         visitHistory: [],
     });
-
-    return res.json({ id: shortID });
+    return res.render("home", {
+        id:shortID
+    })
 }
 async function handlegetshortUrl(req,res){
     const shortId = req.params.shortid;
@@ -26,7 +27,13 @@ async function handlegetshortUrl(req,res){
     if (!entry) {
         return res.status(404).json({ error: "Short URL not found" });
     }
-    return res.redirect(`https://${entry.redirectURL}`);
+     let redirectUrl = entry.redirectURL;
+
+    if (!/^https?:\/\//i.test(redirectUrl)) { //checking if url starts with https
+        redirectUrl = "https://" + redirectUrl;
+    }
+
+    return res.redirect(redirectUrl);
 };
 
 async function handlegetAnalytics(req,res){
