@@ -1,3 +1,5 @@
+//it would save login signup data
+
 const mongoose = require('mongoose');
 
 const urlSchema = new mongoose.Schema({
