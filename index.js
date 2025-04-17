@@ -1,6 +1,8 @@
 const express = require('express');
 const path=require("path");
 const  connectMongo = require('./connection');
+const cookieParser=require("cookie-parser");
+const {checkAuth,restrictToLoggedinUserOnly}=require("./middlewares/auth")
 
 const URL = require("./models/url");
 
@@ -21,14 +23,13 @@ app.set("views", path.resolve("./views"));
 
 app.use(express.json());// parsing json data
 app.use(express.urlencoded({extended:false})); //parsing form
+app.use(cookieParser());
 
-app.use("/user",userRoute);
+app.use("/user",userRoute); //auth
+app.use("/",checkAuth,staticRoute);// creates EJS file
 
-app.use("/", staticRoute);// creates EJS file
+app.use("/url",restrictToLoggedinUserOnly, urlRoute);// create shorturl
 
-app.use("/url", urlRoute);// create shorturl
-
-app.use('/url', urlRoute); // get redirected to url 
 
 
 
